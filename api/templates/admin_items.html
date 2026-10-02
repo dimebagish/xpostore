@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="header inventory-header">
+  <h2>Inventory</h2>
+  <a class="btn" href="/admin/items/new">+ Add Item</a>
+</div>
+
+<div class="table-container">
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Item</th>
+      <th>Price</th>
+      <th>Status</th>
+      <th>Booked</th>
+      <th>Sold</th>
+      <th>Shipped</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for p in items %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.model }}</td>
+      <td>{{ store.currency_symbol }} {{ '%.0f'|format(p.price) }}</td>
+      <td>
+        {% if p.status == "Available" %}
+          <span class="badge success">{{ p.status }}</span>
+        {% elif p.status == "Sold" %}
+          <span class="badge warn">{{ p.status }}</span>
+        {% else %}
+          <span class="badge">{{ p.status }}</span>
+        {% endif %}
+      </td>
+      <td>{{ p.booked_orders }}</td>
+      <td>{{ p.sold_orders }}</td>
+      <td>{{ p.shipped_orders }}</td>
+      <td class="actions">
+        <a class="btn secondary" href="/admin/items/{{ p.id }}/edit">Edit</a>
+        <a class="btn warn" href="{{ url_for('admin_bookings') }}">View orders</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% endblock %}

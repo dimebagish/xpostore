@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-aside">
+    <span class="eyebrow">{{ store.business_name }}</span>
+    <h1>Welcome back.</h1>
+    <p>{{ store.headline }}</p>
+  </div>
+  <div class="form-card card auth-card">
+    <h2>Login</h2>
+    <form method="post">
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input class="input" id="login-email" type="email" name="email" autocomplete="email" required disabled>
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input class="input" id="login-password" type="password" name="password" autocomplete="current-password" required disabled>
+      </div>
+      <button class="btn full" type="submit" disabled>Login</button>
+    </form>
+    <div class="auth-links">
+      <a href="{{ url_for('reset_password') }}">Forgot password?</a>
+      <span class="auth-link-disabled" aria-disabled="true">Create an account</span>
+    </div>
+  </div>
+</section>
+{% endblock %}

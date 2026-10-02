@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-card card">
+  <h2>{{ 'Edit' if item else 'Add New' }} Item</h2>
+  <form method="post" enctype="multipart/form-data">
+    <div class="field"><div class="label">Item</div><input class="input" name="model" value="{{ item.model if item }}" required></div>
+    <div class="field">
+      <div class="label">{{ store.variant_label }} and prices ({{ store.currency_code }})</div>
+      <div id="age-price-rows">
+        {% for variant in age_prices %}
+        <div class="age-price-row">
+          <input class="input" name="ages" value="{{ variant.age }}" placeholder="{{ store.variant_label }}" required>
+          <input class="input" name="prices" type="number" min="0" step="0.01" value="{{ variant.price }}" placeholder="Price ({{ store.currency_code }})" required>
+          <button class="btn secondary remove-age-price" type="button" aria-label="Remove {{ store.variant_label|lower }}">Remove</button>
+        </div>
+        {% else %}
+        <div class="age-price-row">
+          <input class="input" name="ages" placeholder="{{ store.variant_label }}" required>
+          <input class="input" name="prices" type="number" min="0" step="0.01" placeholder="Price ({{ store.currency_code }})" required>
+          <button class="btn secondary remove-age-price" type="button" aria-label="Remove {{ store.variant_label|lower }}">Remove</button>
+        </div>
+        {% endfor %}
+      </div>
+      <button id="add-age-price" class="btn secondary" type="button">Add {{ store.variant_label|lower }}</button>
+    </div>
+    <!-- Category Dropdown -->
+    <div class="field">
+      <div class="label">Category</div>
+      <select class="input" name="category" required>
+        <option value="">Select Category</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if item and item.category == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field"><label class="label" for="media-files">Upload pictures</label><input class="input" id="media-files" name="media_files" type="file" accept="image/jpeg,image/png,image/webp" multiple></div>
+    <div class="field"><label class="label" for="media-urls">Media URLs (optional, one per line)</label><textarea class="input" id="media-urls" name="media" rows="4">{% for m in media %}{{ m.url }}{% if not loop.last %}\n{% endif %}{% endfor %}</textarea></div>
+    <button class="btn">Save</button>
+  </form>
+</div>
+<script>
+  const agePriceRows = document.getElementById('age-price-rows');
+  document.getElementById('add-age-price').addEventListener('click', () => {
+    const row = agePriceRows.querySelector('.age-price-row').cloneNode(true);
+    row.querySelectorAll('input').forEach(input => input.value = '');
+    agePriceRows.appendChild(row);
+  });
+  agePriceRows.addEventListener('click', event => {
+    if (event.target.matches('.remove-age-price') && agePriceRows.children.length > 1) {
+      event.target.closest('.age-price-row').remove();
+    }
+  });
+</script>
+{% endblock %}

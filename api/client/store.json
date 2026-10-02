@@ -1,0 +1,18 @@
+{
+  "business_name": "Acme Corp",
+  "business_type": "Online clothing brand",
+  "headline": "Clothing for every version of you.",
+  "description": "An online clothing brand with everyday styles and considered fits.",
+  "logo": "/static/temp_logo.png",
+  "variant_label": "Size",
+  "currency_symbol": "Rs",
+  "currency_code": "PKR",
+  "advance_payment_percent": 20,
+  "checkout_terms": "Please review your selected sizes and delivery details before submitting your order.",
+  "order_confirmation_message": "Thank you. Your order has been received and will be processed after payment verification.",
+  "footer_tagline": "Clothing for every version of you.",
+  "website_url": "",
+  "facebook_url": "",
+  "instagram_url": "",
+  "email_logo_url": ""
+}

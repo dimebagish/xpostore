@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-heading"><div><span class="eyebrow">ADMIN</span><h1>Payment review</h1></div></div>
+
+{% if order %}
+<div class="card">
+  <h3>Order #{{ order.id }} — {{ order.model }}</h3>
+  <p>{{ store.variant_label }}: {{ order.purchased_age or '—' }} | Price: {{ store.currency_symbol }} {{ '%.2f'|format(order.price) }}</p>
+  <p>
+    Buyer: {{ order.buyer_name or '-' }} <br>
+    Email: {{ order.buyer_email or '-' }} <br>
+    Phone: {{ order.buyer_phone or '-' }} <br>
+    Address: {{ order.buyer_address or '-' }}
+  </p>
+  <p>Status: {{ order.status }} | Payment: {{ order.payment_status or '—' }}</p>
+  {% if order.payment_receipt_url %}
+  <div class="receipt-preview">
+    <h4>Transfer screenshot</h4>
+    <a href="{{ order.payment_receipt_url }}" target="_blank" rel="noopener noreferrer">
+      <img src="{{ order.payment_receipt_url }}" alt="Transfer proof for order {{ order.id }}">
+      <span>Open full image</span>
+    </a>
+  </div>
+  {% else %}
+  <p class="payment-config-warning">No payment screenshot was submitted.</p>
+  {% endif %}
+
+  {% if order.status == 'Booked' %}
+    <form class="inline-actions" method="post" action="/admin/review/verify/{{ order.id }}">
+      <button class="btn success" name="action" value="full">Verify payment and mark sold</button>
+      <button class="btn secondary" name="action" value="revert">Cancel order</button>
+    </form>
+  {% else %}
+    <span class="badge">{{ order.status }}</span>
+  {% endif %}
+  </div>
+{% endif %}
+
+<h2 class="subheading">Pending payments</h2>
+<div class="table-container">
+<table class="table">
+  <thead><tr><th>ID</th><th>Item</th><th>Buyer</th><th>Submitted at</th><th>Proof</th><th>Review</th></tr></thead>
+  <tbody>
+    {% for p in pending %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.model }}{% if p.purchased_age %}<br><small>{{ store.variant_label }}: {{ p.purchased_age }}</small>{% endif %}</td>
+      <td>{{ p.buyer_email or '-' }}</td>
+      <td>{{ p.purchase_time|format_dt if p.purchase_time else '-' }}</td>
+      <td>{% if p.payment_receipt_url %}<a href="{{ p.payment_receipt_url }}" target="_blank" rel="noopener noreferrer">View screenshot</a>{% else %}Missing{% endif %}</td>
+      <td><a class="btn secondary" href="/admin/review?order_id={{ p.id }}">Inspect and verify</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

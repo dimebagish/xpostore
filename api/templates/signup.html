@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-aside">
+    <span class="eyebrow">{{ store.business_name }}</span>
+    <h1>{{ store.headline }}</h1>
+    <p>Start with a few details.</p>
+  </div>
+  <div class="card auth-card">
+    <h2>Create account</h2>
+    <form method="post">
+      <div class="field">
+        <label for="signup-email">Email</label>
+        <input class="input" id="signup-email" type="email" name="email" autocomplete="email" required disabled>
+      </div>
+      <div class="field">
+        <label for="signup-password">Password</label>
+        <input class="input" id="signup-password" type="password" name="password" autocomplete="new-password" required disabled>
+      </div>
+      <div class="field">
+        <label for="signup-phone">Phone</label>
+        <input class="input" id="signup-phone" type="tel" name="phone" autocomplete="tel" disabled>
+      </div>
+      <div class="field">
+        <label for="signup-address">Address</label>
+        <input class="input" id="signup-address" type="text" name="address" autocomplete="street-address" disabled>
+      </div>
+      <button class="btn full" type="submit" disabled>Create account</button>
+    </form>
+    <div class="auth-links"><span>Already have an account?</span><span class="auth-link-disabled" aria-disabled="true">Login</span></div>
+  </div>
+</section>
+{% endblock %}

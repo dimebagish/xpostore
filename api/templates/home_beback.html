@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>We'll Be Back Soon — AutomateXpo</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #080808;
+            --text: #f5f5f5;
+            --muted: #858585;
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: var(--background);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .maintenance {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            position: relative;
+            z-index: 5;
+            width: min(720px, 90%);
+        }
+
+        /* =========================
+           LOGO
+        ========================= */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 70px;
+
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: #fff;
+            color: #080808;
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            opacity: 0.95;
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            margin-bottom: 22px;
+
+            color: var(--muted);
+
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #8cffb0;
+
+            box-shadow:
+                0 0 0 4px rgba(140, 255, 176, 0.08),
+                0 0 15px rgba(140, 255, 176, 0.45);
+
+            animation: pulse 2s infinite;
+        }
+
+        /* =========================
+           HEADING
+        ========================= */
+
+        h1 {
+            font-size: clamp(64px, 9vw, 118px);
+            line-height: 0.92;
+
+            letter-spacing: -6px;
+            font-weight: 600;
+
+            margin-bottom: 35px;
+        }
+
+        h1 span {
+            color: #777;
+        }
+
+        /* =========================
+           DESCRIPTION
+        ========================= */
+
+        .description {
+            max-width: 480px;
+
+            color: var(--muted);
+
+            font-size: 16px;
+            line-height: 1.7;
+
+            margin-bottom: 45px;
+        }
+
+        /* =========================
+           DIVIDER
+        ========================= */
+
+        .divider {
+            width: 100%;
+            height: 1px;
+
+            background: var(--border);
+
+            margin-bottom: 20px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+
+            color: #555;
+
+            font-size: 12px;
+        }
+
+        /* =========================
+           BACKGROUND
+        ========================= */
+
+        .background {
+            position: absolute;
+            inset: 0;
+
+            pointer-events: none;
+        }
+
+        /* Grid */
+
+        .grid {
+            position: absolute;
+            inset: -50%;
+
+            background-image:
+                linear-gradient(
+                    rgba(255, 255, 255, 0.025) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.025) 1px,
+                    transparent 1px
+                );
+
+            background-size: 70px 70px;
+
+            transform: perspective(600px) rotateX(55deg);
+
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 20%,
+                black 70%
+            );
+        }
+
+        /* =========================
+           GLOWING ORBS
+        ========================= */
+
+        .orb {
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(100px);
+
+            opacity: 0.12;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+
+            background: #ffffff;
+
+            top: -180px;
+            right: -120px;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+
+            background: #888;
+
+            bottom: -200px;
+            left: -120px;
+        }
+
+        /* =========================
+           ANIMATION
+        ========================= */
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+                transform: scale(0.9);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.15);
+            }
+
+            100% {
+                opacity: 0.5;
+                transform: scale(0.9);
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .content {
+                width: 86%;
+            }
+
+            .logo {
+                margin-bottom: 55px;
+            }
+
+            h1 {
+                font-size: clamp(58px, 17vw, 90px);
+                letter-spacing: -4px;
+            }
+
+            .description {
+                font-size: 15px;
+                max-width: 340px;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .grid {
+                background-size: 50px 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="maintenance">
+
+        <div class="content">
+
+            <div class="logo">
+                <span class="logo-mark">A</span>
+                <span class="logo-text">AutomateXpo</span>
+            </div>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>Temporarily offline</span>
+            </div>
+
+            <h1>
+                We’ll be<br>
+                <span>back soon.</span>
+            </h1>
+
+            <p class="description">
+                We’re making a few improvements behind the scenes.
+                Everything will be back up shortly.
+            </p>
+
+            <div class="divider"></div>
+
+            <div class="footer">
+                <span>Thanks for your patience.</span>
+                <span>© 2026 AutomateXpo</span>
+            </div>
+
+        </div>
+
+        <div class="background">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="grid"></div>
+        </div>
+
+    </main>
+
+</body>
+</html>

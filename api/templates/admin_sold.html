@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-heading"><div><span class="eyebrow">ADMIN</span><h1>Sold and shipping</h1></div></div>
+<div class="table-container">
+<table class="table">
+  <thead>
+    <tr><th>ID</th><th>Item</th><th>Buyer</th><th>Payment</th><th>Shipping</th><th>Sold At</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for p in sold %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.model }}</td>
+      <td>{{ p.buyer_email or '-' }}</td>
+      <td>{% if p.full_payment %}Full{% else %}Token{% endif %}</td>
+      <td>{{ p.shipping_status }}</td>
+      <td>{{ p.selling_time.strftime("%-m/%-d/%Y %-I:%M %p") if p.selling_time else "-" }}</td>
+      <td>
+        <form method="post" action="/admin/orders/{{ p.id }}/ship">
+          <button class="btn">Mark Shipped</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

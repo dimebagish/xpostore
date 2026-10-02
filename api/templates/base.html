@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ store.business_name }} | Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="site-wrapper" id="top">
+
+    <header>
+      <nav class="nav page-shell" aria-label="Main navigation">
+        <a href="{{ url_for('preview_store') if preview_mode else url_for('home') }}" class="brand">
+          {% if store.logo %}<img src="{{ store.logo }}" alt="{{ store.business_name }}" class="brand-logo" onerror="this.hidden=true">{% endif %}
+          <span class="brand-text">{{ store.business_name }}</span>
+        </a>
+        <div class="nav-actions">
+          {% if preview_flow %}
+            <button class="nav-link nav-disabled" type="button" disabled>Create account</button>
+            <button class="btn secondary" type="button" disabled>Login</button>
+          {% endif %}
+          {% if preview_mode %}
+            <a class="btn secondary" href="{{ url_for('try_it_out') }}">Edit details</a>
+            <form method="post" action="{{ url_for('exit_preview') }}">
+              <button class="btn" type="submit">Exit preview</button>
+            </form>
+          {% elif not preview_flow %}
+            {% if session.get('user_email') %}
+              <span class="user-chip">{{ session['user_email'] }}</span>
+              <div class="nav-group">
+                <a href="{{ url_for('account_purchased') }}" class="btn">Purchased</a>
+                <a href="{{ url_for('view_cart') }}" class="btn">Cart</a>
+              </div>
+              <a class="btn secondary" href="{{ url_for('logout') }}">Logout</a>
+            {% elif session.get('is_admin') %}
+              <span class="user-chip">Admin</span>
+              <a class="btn secondary" href="{{ url_for('admin_bookings') }}">Bookings</a>
+              <a class="btn" href="{{ url_for('admin_items') }}">Inventory</a>
+              <a class="btn secondary" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+              <button class="nav-link nav-disabled" type="button" disabled>Create account</button>
+              <button class="btn secondary" type="button" disabled>Login</button>
+            {% endif %}
+            <a class="btn" href="{{ url_for('try_it_out') }}">Try it out</a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
+    <main class="site-content page-shell">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-list">
+            {% for category, msg in messages %}
+            <div class="flash flash-{{ category }}" role="status">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <section>
+          <a href="{{ url_for('preview_store') if preview_mode else url_for('home') }}" class="footer-brand">{{ store.business_name }}</a>
+          <p>{{ store.footer_tagline }}</p>
+        </section>
+        <section>
+          <h4>Visit</h4>
+          {% if store.website_url %}<a href="{{ store.website_url }}">About and contact</a>{% endif %}
+        </section>
+        <section>
+          <h4>Follow along</h4>
+          <div class="social-links">
+            {% if store.facebook_url %}<a href="{{ store.facebook_url }}" aria-label="Facebook"><img src="/static/facebook.svg" alt=""></a>{% endif %}
+            {% if store.instagram_url %}<a href="{{ store.instagram_url }}" aria-label="Instagram"><img src="/static/instagram.svg" alt=""></a>{% endif %}
+          </div>
+        </section>
+      </div>
+      <div class="footer-bottom">
+        <span>© {{ now().year }} {{ store.business_name }}</span>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

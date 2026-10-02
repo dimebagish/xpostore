@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="section-heading">
+  <div>
+    <span class="eyebrow">CHECKOUT</span>
+    <h1>Order details</h1>
+  </div>
+</div>
+
+<div class="checkout-grid">
+
+  <section class="card checkout-form">
+
+    <form method="post"
+          enctype="multipart/form-data"
+          action="{{ url_for('payment_multiple') }}">
+
+      <input type="hidden"
+             name="selected_ids"
+             value="{{ items|map(attribute='id')|join(',') }}">
+
+      <div class="field">
+        <label for="checkout-name">Full name</label>
+        <input class="input"
+               id="checkout-name"
+               type="text"
+               name="buyer_name"
+               autocomplete="name"
+               required>
+      </div>
+
+      <div class="field">
+        <label for="checkout-email">Email</label>
+        <input class="input"
+               id="checkout-email"
+               type="email"
+               name="buyer_email"
+               autocomplete="email"
+               required>
+      </div>
+
+      <div class="field">
+        <label for="checkout-phone">Phone</label>
+        <input class="input"
+               id="checkout-phone"
+               type="tel"
+               name="buyer_phone"
+               autocomplete="tel"
+               required>
+      </div>
+
+      <div class="field">
+        <label for="checkout-address">Address</label>
+        <input class="input"
+               id="checkout-address"
+               type="text"
+               name="buyer_address"
+               autocomplete="street-address"
+               required>
+      </div>
+
+      <div class="field">
+        <label for="checkout-receipt">Upload payment screenshot</label>
+        <input class="input"
+               id="checkout-receipt"
+               type="file"
+               name="receipt"
+               required>
+      </div>
+
+
+      <button type="submit"
+              class="btn">
+        Submit Payment
+      </button>
+
+    </form>
+
+  </section>
+
+
+  <!-- ORDER SUMMARY -->
+
+  <aside class="card checkout-summary">
+
+    <h3>Order Summary</h3>
+
+    <ul>
+      {% for p in items %}
+        <li>{{ p.model }} — {{ p.price }}</li>
+      {% endfor %}
+    </ul>
+
+    <strong>Total = {{ total_price }}</strong>
+
+  </aside>
+
+</div>
+
+
+{% endblock %}

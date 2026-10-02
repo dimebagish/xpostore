@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Modern Filter Bar for home.html -->
+<form method="get" class="filter-bar">
+  <label class="filter-field">
+    <span class="filter-label">Category</span>
+    <select name="category" class="input filter-select" aria-label="Filter by category">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+      <option value="{{ category }}" {{ 'selected' if request.args.get('category') == category else '' }}>{{ category }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="filter-field">
+    <span class="filter-label">Sort by</span>
+    <select name="sort" class="input filter-select" aria-label="Sort products">
+      <option value="">Sort By</option>
+      <option value="price_asc" {{ 'selected' if request.args.get('sort') == 'price_asc' else '' }}>Price: Low to High</option>
+      <option value="price_desc" {{ 'selected' if request.args.get('sort') == 'price_desc' else '' }}>Price: High to Low</option>
+    </select>
+  </label>
+  <label class="filter-field filter-search-field">
+    <span class="filter-label">Search products</span>
+    <input type="search" name="search" class="input filter-search" placeholder="Name or keyword" value="{{ request.args.get('search', '') }}">
+  </label>
+  <button class="btn filter-btn" type="submit">Apply filters</button>
+</form>
+
+<div class="header">
+  <div>
+    <span class="eyebrow">{{ store.business_type }}</span>
+    <h1>{{ store.headline }}</h1>
+    <p>{{ store.description }}</p>
+  </div>
+  {% if items %}<span class="result-count">{{ items|length }} items</span>{% endif %}
+</div>
+{% if items %}
+<div class="grid cols-3 product-grid">
+  {% for p in items %}
+  <div class="card">
+    <div class="media-strip">
+      {% for m in p.media %}
+        {% if m.kind == 'image' %}
+          <img src="{{ m.url }}" alt="{{ p.model }}" />
+        {% else %}
+          <video src="{{ m.url }}" controls></video>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <h2>{{ p.model }}</h2>
+    {% if p.age_prices %}
+    <p class="price">From {{ store.currency_symbol }} {{ '%.0f'|format(p.age_prices[0].price) }}</p>
+    {% else %}
+    <p class="price">{{ store.currency_symbol }} {{ '%.0f'|format(p.price) }}</p>
+    {% endif %}
+    <div class="actions">
+      <a href="{{ url_for('item_detail', item_id=p.id) }}" class="btn secondary">Details</a>
+      {% if p.age_prices %}
+      <a href="{{ url_for('item_detail', item_id=p.id) }}" class="btn">Choose {{ store.variant_label|lower }}</a>
+      {% else %}
+      <form method="post" action="{{ url_for('add_to_cart', item_id=p.id) }}">
+        <button type="submit" class="btn">Add to cart</button>
+      </form>
+      {% endif %}
+    </div>
+
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <span class="empty-mark" aria-hidden="true">—</span>
+  <h2>No products found</h2>
+  <p>Try another search or clear your filters.</p>
+  <a class="btn secondary" href="{{ url_for('home') }}">Clear filters</a>
+</div>
+{% endif %}
+{% endblock %}

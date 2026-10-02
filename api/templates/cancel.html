@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Cancelled</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full text-center animate-fadeIn">
+    
+    <!-- Cancel Icon -->
+    <div class="flex justify-center mb-6">
+      <div class="bg-red-100 text-red-600 rounded-full p-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" 
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Payment Cancelled ❌</h1>
+    <p class="text-gray-600 mb-6">It looks like you cancelled the payment process. Don’t worry — your order has not been charged.</p>
+
+    <!-- Suggestions -->
+    <div class="bg-gray-50 rounded-xl p-4 text-left mb-6">
+      <h2 class="font-semibold text-gray-700 mb-3">⚠️ What you can do</h2>
+      <ul class="space-y-2 text-sm text-gray-600 list-disc pl-5">
+        <li>Try completing the payment again.</li>
+        <li>Check your card details or choose another payment method.</li>
+        <li>Contact support if the issue persists.</li>
+      </ul>
+    </div>
+
+    <!-- Next Actions -->
+    <div class="space-y-3">
+      <a href="{{ url_for('payment') }}" 
+         class="block w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition">
+        Try Again
+      </a>
+      <a href="{{ url_for('home') }}" 
+         class="block w-full py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl shadow hover:bg-gray-300 transition">
+        Back to Home
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-xs text-gray-400 mt-6">If you believe you were charged by mistake, please contact our support team.</p>
+  </div>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-out;
+    }
+  </style>
+
+</body>
+</html>

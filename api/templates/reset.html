@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-card card">
+  <h2>Reset password</h2>
+
+  {% if step == "email" %}
+  <!-- STEP 1: Enter email -->
+  <form method="post">
+    <div class="field">
+      <div class="label">Email</div>
+      <input class="input" type="email" name="email" required>
+    </div>
+    <button class="btn">Verify OTP</button>
+  </form>
+
+  {% elif step == "otp" %}
+  <!-- STEP 2: Enter OTP + new password -->
+  <form method="post">
+    <div class="field">
+      <div class="label">Enter OTP</div>
+      <input class="input" type="text" name="otp" required>
+    </div>
+    <div class="field">
+      <div class="label">New password</div>
+      <input class="input" type="password" name="new_password" required>
+    </div>
+    <button class="btn">Save</button>
+  </form>
+  {% endif %}
+
+  <p class="label">
+    We will verify your email and send an OTP. If OTP matches, your password will be updated.
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="preview-notice" aria-label="Preview status">
+  <div>
+    <span class="eyebrow">PRIVATE STORE PREVIEW</span>
+    <p>Sample products are shown. This preview expires after two hours.</p>
+  </div>
+  <a class="btn secondary" href="{{ url_for('try_it_out') }}">Change details</a>
+</section>
+
+<form class="filter-bar preview-filters" aria-label="Sample store filters">
+  <label class="filter-field">
+    <span class="filter-label">Category</span>
+    <select class="input" disabled><option>All Categories</option></select>
+  </label>
+  <label class="filter-field">
+    <span class="filter-label">Sort by</span>
+    <select class="input" disabled><option>Sort by</option></select>
+  </label>
+  <label class="filter-field filter-search-field">
+    <span class="filter-label">Search products</span>
+    <input class="input" type="search" placeholder="Name or keyword" disabled>
+  </label>
+  <button class="btn filter-btn" type="button" disabled>Apply filters</button>
+</form>
+
+<div class="header preview-store-heading">
+  <div>
+    <span class="eyebrow">{{ store.business_type }}</span>
+    <h1>{{ store.headline }}</h1>
+    <p>{{ store.description }}</p>
+  </div>
+  <span class="result-count">{{ products|length }} sample items</span>
+</div>
+
+<div class="grid cols-3 product-grid preview-products">
+  {% for product in products %}
+  <article class="card preview-product">
+    <div class="media-strip">
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
+    </div>
+    <h2>{{ product.name }}</h2>
+    <p class="price">{{ store.currency_symbol }} {{ '%.0f'|format(product.price) }}</p>
+    <p class="preview-option-note">{{ product.option_note }}</p>
+    <button class="btn secondary" type="button" disabled>Preview item</button>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

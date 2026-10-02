@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="detail-layout">
+  <div class="card detail-product">
+    <div class="detail-media">
+      {% for m in media %}
+      {% if m.kind == 'image' %}
+      <img src="{{ m.url }}" alt="{{ item.model }}" />
+      {% else %}
+      <video src="{{ m.url }}" controls></video>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h1 class="detail-title">{{ item.model }}</h1>
+  </div>
+
+  <aside class="card detail-purchase">
+    <span class="eyebrow">ITEM PRICE</span>
+    <h2>Purchase</h2>
+    {% if item.status == 'Sold' %}
+    <div class="badge status-sold">This item is sold</div>
+    {% else %}
+    {% if age_prices %}
+    <form class="age-purchase-form" method="post" action="{{ url_for('add_to_cart', item_id=item.id) }}">
+      <fieldset class="age-price-options">
+        <legend>Select {{ store.variant_label|lower }}</legend>
+        {% for variant in age_prices %}
+        <label class="age-price-option">
+          <input type="radio" name="age" value="{{ variant.age }}" data-price="{{ variant.price }}" required>
+          <span>{{ variant.age }}</span>
+          <strong>{{ store.currency_symbol }} {{ '%.2f'|format(variant.price) }}</strong>
+        </label>
+        {% endfor %}
+      </fieldset>
+      <p class="price" id="selected-age-price" aria-live="polite">Choose a {{ store.variant_label|lower }} to see the price</p>
+      <div class="age-purchase-actions" id="age-purchase-actions" hidden>
+        <button class="btn" type="submit">Add to cart</button>
+        <button class="btn secondary" type="submit" name="buy_now" value="1">Buy now</button>
+      </div>
+    </form>
+    {% else %}
+    <p class="price">{{ store.currency_symbol }} {{ '%.0f'|format(item.price) }}</p>
+    <form method="post" action="{{ url_for('add_to_cart', item_id=item.id) }}">
+      <button class="btn full" type="submit" name="buy_now" value="1">Buy now</button>
+    </form>
+    {% endif %}
+    {% endif %}
+
+  </aside>
+</div>
+{% if age_prices %}
+<script>
+  document.querySelectorAll('input[name="age"]').forEach(option => {
+    option.addEventListener('change', () => {
+      document.getElementById('selected-age-price').textContent = `{{ store.currency_symbol }} ${Number(option.dataset.price).toFixed(2)}`;
+      document.getElementById('age-purchase-actions').hidden = false;
+    });
+  });
+</script>
+{% endif %}
+{% endblock %}

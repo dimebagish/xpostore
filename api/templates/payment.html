@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if items %}
+<section class="checkout-layout">
+    
+    <!-- Left: Buyer Details -->
+    <div class="card form-card checkout-contact">
+      <span class="eyebrow">CHECKOUT</span>
+      <h1>Your information</h1>
+      <form id="payment-form" method="post" enctype="multipart/form-data">
+        <div class="field">
+          <label for="buyer-name">Full name</label>
+          <input id="buyer-name" type="text" name="buyer_name" autocomplete="name" required class="input" placeholder="Enter your full name">
+        </div>
+        <div class="field">
+          <label for="buyer-email">Email</label>
+          <input id="buyer-email" type="email" name="buyer_email" value="{{ session.get('user_email', '') }}" autocomplete="email" readonly required class="input">
+        </div>
+        <div class="field">
+          <label for="buyer-phone">Phone</label>
+          <input id="buyer-phone" type="tel" name="buyer_phone" autocomplete="tel" required class="input" placeholder="Enter your phone number">
+        </div>
+        <div class="field">
+          <label for="buyer-address">Address</label>
+          <input id="buyer-address" type="text" name="buyer_address" autocomplete="street-address" required class="input" placeholder="Enter your address">
+        </div>
+        <div class="field receipt-field">
+          <label for="payment-receipt">Transfer screenshot</label>
+          <input id="payment-receipt" type="file" name="receipt" accept="image/jpeg,image/png,image/webp" required class="input" {% if not receipt_upload_configured %}disabled{% endif %}>
+          <small>Upload a JPG, PNG, or WebP image, up to 8 MB.</small>
+        </div>
+        {% if not receipt_upload_configured %}
+        <p class="payment-config-warning">Payment proof upload is temporarily unavailable. Please contact the store.</p>
+        {% endif %}
+
+        <div class="order-terms">
+          <div class="terms-header">
+            <span class="terms-icon" aria-hidden="true">✦</span>
+            <div>
+              <h3>Before You Place Your Order</h3>
+              <p>Please read our order terms carefully.</p>
+            </div>
+          </div>
+
+          <div class="terms-content">
+            <p>
+              {{ store.checkout_terms }}
+            </p>
+            <p>
+              A <strong>{{ '%g'|format(advance_payment_percent) }}% advance payment</strong> is required to secure your order.
+            </p>
+          </div>
+
+          <label class="terms-checkbox" for="payment-terms">
+            <input type="checkbox" id="payment-terms" name="terms" required>
+            <span class="checkmark" aria-hidden="true"></span>
+            <span>
+              I have read and agree to the order terms and {{ '%g'|format(advance_payment_percent) }}% advance payment requirement.
+            </span>
+          </label>
+        </div>
+
+        <button id="submit-order" class="btn full" type="submit" disabled>Submit transfer for verification</button>
+        <script>
+          const paymentTerms = document.getElementById("payment-terms");
+          const submitOrder = document.getElementById("submit-order");
+          const paymentConfigured = {{ 'true' if bank_details_configured and receipt_upload_configured else 'false' }};
+
+          paymentTerms.addEventListener("change", function () {
+            submitOrder.disabled = !this.checked || !paymentConfigured;
+          });
+        </script>
+      </form>
+    </div>
+
+    <!-- Right: Order Summary + Payment -->
+    <div class="order-summary">
+      <div class="card order-card">
+        <span class="eyebrow">YOUR ORDER</span>
+        <h2>Order summary</h2>
+        
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th class="text-center">Price</th>
+                <th class="text-center">Qty</th>
+                <th class="text-center">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in items %}
+              <tr>
+                <td>{{ p.model }}{% if p.selected_age %}<br><small>{{ store.variant_label }}: {{ p.selected_age }}</small>{% endif %}</td>
+                <td class="text-center">{{ store.currency_symbol }} {{ '%.2f'|format(p.price) }}</td>
+                <td class="text-center">1</td>
+                <td class="text-center">{{ store.currency_symbol }} {{ '%.2f'|format(p.price) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="text-right grand-total-label">Grand total</td>
+                <td class="text-center grand-total">{{ store.currency_symbol }} {{ '%.2f'|format(total_price) }}</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="text-right">{{ '%g'|format(advance_payment_percent) }}% advance payable now</td>
+                <td class="text-center">{{ store.currency_symbol }} {{ '%.2f'|format(advance_amount) }}</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="text-right">Remaining balance due on delivery</td>
+                <td class="text-center">{{ store.currency_symbol }} {{ '%.2f'|format(delivery_balance) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="payment-method">
+          <span class="eyebrow">ADVANCE PAYMENT</span>
+          <h3>Bank transfer</h3>
+          <p class="transfer-instruction">Pay the {{ '%g'|format(advance_payment_percent) }}% advance when submitting your order. The remaining balance is due on delivery, and your order stays pending until the store verifies the transfer.</p>
+          {% if bank_details_configured %}
+          <dl class="bank-details">
+            <div><dt>Bank</dt><dd>{{ bank_details.bank_name }}</dd></div>
+            <div><dt>Account name</dt><dd>{{ bank_details.account_name }}</dd></div>
+            <div><dt>Account number</dt><dd>{{ bank_details.account_number }}</dd></div>
+            {% if bank_details.iban %}<div><dt>IBAN</dt><dd>{{ bank_details.iban }}</dd></div>{% endif %}
+            <div><dt>{{ '%g'|format(advance_payment_percent) }}% advance payable now</dt><dd>{{ store.currency_symbol }} {{ '%.2f'|format(advance_amount) }}</dd></div>
+          </dl>
+          {% else %}
+          <p class="payment-config-warning">Bank transfer details have not been configured. Checkout is unavailable.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</section>
+
+{% else %}
+<div class="empty-state">
+  <span class="empty-mark" aria-hidden="true">—</span>
+  <h1>Your order is empty</h1>
+  <p>Add an item before continuing to checkout.</p>
+  <a class="btn secondary" href="{{ url_for('home') }}">Browse products</a>
+</div>
+{% endif %}
+
+{% endblock %}

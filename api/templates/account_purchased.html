@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Purchased Items</h2>
+<div class="table-container">
+<table class="table">
+  <thead>
+    <tr><th>Item</th><th>Price</th><th>Order status</th><th>Payment</th><th>Payment status</th><th>Shipping</th><th>Tracking number</th><th>Order placed</th><th>Sold at</th></tr>
+  </thead>
+  <tbody>
+    {% for p in orders %}
+    <tr>
+      <td>
+        <strong>{{ p.model }}</strong>
+        {% if p.purchased_age %}<small class="order-item-detail">{{ store.variant_label }}: {{ p.purchased_age }}</small>{% endif %}
+        {% if p.condition %}<small class="order-item-detail">{{ p.condition }}</small>{% endif %}
+        {% if p.specs %}<small class="order-item-detail">{{ p.specs }}</small>{% endif %}
+      </td>
+      <td>{{ store.currency_symbol }} {{ '%.0f'|format(p.price) }}</td>
+      <td><span class="badge {% if p.status == 'Sold' %}status-sold{% else %}status-booked{% endif %}">{{ p.status }}</span></td>
+      <td>{% if p.payment_method == 'Bank transfer' and p.payment_status == 'Pending' %}Full, awaiting verification{% elif p.full_payment %}Full{% else %}Token{% endif %}</td>
+      <td>{{ p.payment_status }}</td>
+      <td>{{ p.shipping_status }}</td>
+      <td>{{ p.tracking_number }}</td>
+      <td>{{ p.purchase_time|format_dt if p.purchase_time else '-' }}</td>
+      <td>{{ p.selling_time|format_dt if p.selling_time else '-' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

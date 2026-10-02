@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-heading"><div><span class="eyebrow">YOUR ACCOUNT</span><h1>Your cart</h1></div></div>
+
+{% if items %}
+<div class="cart-page-container">
+
+  <section class="cart-items">
+    <div class="card cart-items-card">
+      <form id="cartForm" method="post" action="{{ url_for('checkout_cart') }}">
+        <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Model</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in items %}
+            <tr>
+              <td><input type="checkbox" name="selected_items" value="{{ p.id }}" class="item-checkbox"></td>
+              <td>{{ p.model }}{% if p.selected_age %}<small class="order-item-detail">{{ store.variant_label }}: {{ p.selected_age }}</small>{% endif %}</td>
+              <td>{{ store.currency_symbol }} {{ '%.2f'|format(p.price) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </form>
+
+      <!-- Clear Cart button -->
+      <form class="clear-cart-form" method="post" action="{{ url_for('clear_cart') }}">
+        <button type="submit" class="btn danger full">Clear Cart</button>
+      </form>
+    </div>
+  </section>
+
+  <aside class="cart-summary-column">
+    <div class="card summary-card" id="orderSummary" hidden>
+      <h3>Order Summary</h3>
+      <ul id="summaryList"></ul>
+      <hr>
+      <p><strong>Total:</strong> {{ store.currency_symbol }} <span id="summaryTotal">0</span></p>
+      <button id="buySelectedBtn" type="submit" form="cartForm" class="btn full" hidden>Buy selected</button>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+  const items = {{ items|tojson }};
+  
+  const checkboxes = document.querySelectorAll('.item-checkbox');
+  const summary = document.getElementById('orderSummary');
+  const summaryList = document.getElementById('summaryList');
+  const summaryTotal = document.getElementById('summaryTotal');
+  const buyBtn = document.getElementById('buySelectedBtn');
+
+  function updateSummary() {
+    summaryList.innerHTML = '';
+    let total = 0;
+    let anyChecked = false;
+
+    checkboxes.forEach(cb => {
+      if(cb.checked) {
+        anyChecked = true;
+        const item = items.find(i => i.id == cb.value); 
+        if(item) {
+          const selectedAge = item.selected_age ? ` ({{ store.variant_label }}: ${item.selected_age})` : '';
+          summaryList.innerHTML += `<li>${item.model}${selectedAge} — {{ store.currency_symbol }} ${Number(item.price).toFixed(2)}</li>`;
+          total += item.price;
+        }
+      }
+    });
+
+    if(anyChecked) {
+      summary.hidden = false;
+      buyBtn.hidden = false;
+      summaryTotal.textContent = total;
+    } else {
+      summary.hidden = true;
+      buyBtn.hidden = true;
+    }
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener('change', updateSummary));
+</script>
+
+{% else %}
+<div class="card empty">
+  <p>Your cart is empty.</p>
+  <a href="{{ url_for('home') }}" class="btn full">Continue Shopping</a>
+</div>
+{% endif %}
+{% endblock %}

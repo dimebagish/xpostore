@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="preview-setup-layout">
+  <div class="preview-intro">
+    <span class="eyebrow">STORE BUILDER</span>
+    <h1>Try your store idea.</h1>
+    <p>Enter your brand details to preview a storefront with sample products. Your preview is private to this browser and expires after two hours.</p>
+  </div>
+
+  <form class="card preview-form" method="post" enctype="multipart/form-data">
+    <div class="field">
+      <label for="preview-business-name">Business name</label>
+      <input class="input" id="preview-business-name" name="business_name" maxlength="80" value="{{ form_values.get('business_name', '') }}" autocomplete="organization" required>
+    </div>
+    <div class="field">
+      <label for="preview-tagline">Business tagline</label>
+      <input class="input" id="preview-tagline" name="tagline" maxlength="140" value="{{ form_values.get('tagline', '') }}" placeholder="A short line customers will remember" required>
+    </div>
+    <div class="field">
+      <label for="preview-business-type">Business type</label>
+      <select class="input" id="preview-business-type" name="business_type" required>
+        <option value="">Choose a type</option>
+        {% for business_type in business_types %}
+        <option value="{{ business_type }}" {% if form_values.get('business_type') == business_type %}selected{% endif %}>{{ business_type }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field" id="other-business-type-field" {% if form_values.get('business_type') != 'Other' %}hidden{% endif %}>
+      <label for="other-business-type">Describe your business type</label>
+      <input class="input" id="other-business-type" name="other_business_type" maxlength="40" value="{{ form_values.get('other_business_type', '') }}">
+    </div>
+    <div class="field">
+      <label for="preview-logo">Logo <span class="optional-label">Optional</span></label>
+      <input class="input" id="preview-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp">
+      <small>PNG, JPG, or WebP. Maximum 256 KB.</small>
+    </div>
+    <button class="btn preview-submit" type="submit">Try now</button>
+  </form>
+</section>
+<script>
+  const businessType = document.getElementById('preview-business-type');
+  const otherBusinessType = document.getElementById('other-business-type-field');
+  const otherBusinessInput = document.getElementById('other-business-type');
+  businessType.addEventListener('change', () => {
+    const isOther = businessType.value === 'Other';
+    otherBusinessType.hidden = !isOther;
+    otherBusinessInput.required = isOther;
+  });
+</script>
+{% endblock %}

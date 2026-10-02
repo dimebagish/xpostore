@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="section-heading"><div><span class="eyebrow">ADMIN</span><h1>Bookings and sales</h1></div></div>
+<h2 class="subheading">Pending payments</h2>
+{% if pending %}
+  <ul class="list">
+    {% for p in pending %}
+      <li>
+        <strong>{{ p.model }}</strong> — {{ p.buyer_email }}
+        {% if p.purchased_age %}<span>{{ store.variant_label }}: {{ p.purchased_age }} | {{ store.currency_symbol }} {{ '%.2f'|format(p.price) }}</span>{% endif %}
+        (Submitted at {% if p.purchase_time %}{{ p.purchase_time.strftime("%m/%d/%Y %I:%M %p") }}{% endif %})
+        {% if p.payment_receipt_url %}<a href="{{ p.payment_receipt_url }}" target="_blank" rel="noopener noreferrer">View transfer screenshot</a>{% endif %}
+        <a class="btn warn" href="{{ url_for('admin_review', order_id=p.id) }}">Review</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No pending payments.</p>
+{% endif %}
+
+<hr>
+
+<h2 class="subheading">Sold items</h2>
+{% if sold %}
+  <div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Buyer</th>
+        <th>Sold At</th>
+        <th>Shipping Status</th>
+        <th>Tracking #</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in sold %}
+    <tr>
+      <td>{{ p.model }}</td>
+      <td>{{ p.buyer_email }}</td>
+      <td>{{ p.selling_time|format_dt if p.selling_time }}</td>
+      <td>{{ p.shipping_status }}</td>
+      <td>
+        {% if p.tracking_number %}
+          {{ p.tracking_number }}
+        {% else %}
+          —
+        {% endif %}
+      </td>
+      <td>
+        <span class="badge status-sold">Payment verified</span>
+        {% if p.shipping_status == 'Shipped' %}
+          <span class="badge">Already shipped</span>
+        {% else %}
+          <form method="post" action="{{ url_for('mark_shipped', order_id=p.id) }}">
+            <input type="text" name="tracking_number" placeholder="Enter tracking number" required />
+            <button type="submit" class="btn">Mark as shipped</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+{% else %}
+  <p>No sold items yet.</p>
+{% endif %}
+
+{% endblock %}
