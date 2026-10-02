@@ -1,8 +1,8 @@
 {
   "business_name": "Acme Corp",
-  "business_type": "Online clothing brand",
-  "headline": "Clothing for every version of you.",
-  "description": "An online clothing brand with everyday styles and considered fits.",
+  "business_type": "Your business type",
+  "headline": "Your business headline",
+  "description": "Your business description",
   "logo": "/static/temp_logo.png",
   "variant_label": "Size",
   "currency_symbol": "Rs",
