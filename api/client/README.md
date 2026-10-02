@@ -22,3 +22,12 @@ The `/try-it-out` flow creates a private preview record that expires after two h
 3. The preview service stores only the business name, type, tagline, and optional image data. The scheduled job deletes expired rows every 15 minutes; clicking **Exit preview** deletes the current record immediately.
 
 Uploaded preview logos are limited to PNG, JPG, or WebP files up to 256 KB. Keep `SECRET_KEY` configured so preview IDs remain protected by Flask's signed session cookie.
+
+## Store Modes
+
+Run `store_mode.sql` in the primary store Supabase project. Its trigger accepts only `demo` and `client` and updates the mode timestamp. The app reads the mode on each request and defaults to client mode if the table is unavailable.
+
+- `demo`: login, signup, and password reset work normally; **Try it out** is hidden.
+- `client`: account navigation and forms are disabled; **Try it out** is enabled.
+
+Switch modes in the Supabase SQL editor with `update public.store_runtime_config set mode = 'demo' where id is true;` or set it back to `client`. The change takes effect on the next request without restarting Flask.

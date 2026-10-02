@@ -208,13 +208,33 @@ def fetch_items(category=None, sort=None, search=None, filter_status=None):
     return query.execute().data or []
 
 
+def get_store_mode():
+    cached_mode = getattr(g, 'store_mode', None)
+    if cached_mode:
+        return cached_mode
+    try:
+        result = supabase.table('store_runtime_config').select('mode').eq('id', True).execute()
+        rows = result.data or []
+        mode = rows[0].get('mode') if rows else 'client'
+    except Exception:
+        app.logger.warning('Store mode lookup failed; using client mode.', exc_info=True)
+        mode = 'client'
+    if mode not in {'demo', 'client'}:
+        mode = 'client'
+    g.store_mode = mode
+    return mode
+
+
 @app.context_processor
 def inject_now():
+    store_mode = get_store_mode()
     return {
         'now': datetime.now,
         'store': getattr(g, 'store_override', STORE_CONFIG),
         'preview_mode': getattr(g, 'preview_mode', False),
-        'preview_flow': getattr(g, 'preview_mode', False) or request.endpoint in ('try_it_out', 'preview_store')
+        'preview_flow': getattr(g, 'preview_mode', False) or request.endpoint in ('try_it_out', 'preview_store'),
+        'store_mode': store_mode,
+        'client_mode': store_mode == 'client'
     }
 
 
@@ -310,6 +330,8 @@ def read_preview_logo(upload):
 
 @app.route('/try-it-out', methods=['GET', 'POST'])
 def try_it_out():
+    if get_store_mode() != 'client':
+        return redirect(url_for('home'))
     if request.method == 'GET':
         values = load_preview(session.get('store_preview_id')) or {}
         return render_template(
@@ -376,6 +398,8 @@ def try_it_out():
 
 @app.get('/try-it-out/store')
 def preview_store():
+    if get_store_mode() != 'client':
+        return redirect(url_for('home'))
     try:
         record = load_preview(session.get('store_preview_id'))
     except Exception:
@@ -1556,6 +1580,12 @@ def item_detail(item_id):
 # -------------------------
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if get_store_mode() != 'demo':
+        if request.method == 'POST':
+            flash('Account creation is disabled in client mode.', 'info')
+            return redirect(url_for('home'))
+        return render_template('signup.html')
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -1594,6 +1624,12 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if get_store_mode() != 'demo':
+        if request.method == 'POST':
+            flash('Login is disabled in client mode.', 'info')
+            return redirect(url_for('home'))
+        return render_template('login.html')
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -1619,6 +1655,10 @@ def logout():
 
 @app.route("/reset", methods=["GET", "POST"])
 def reset_password():
+    if get_store_mode() != 'demo':
+        flash('Account access is disabled in client mode.', 'info')
+        return redirect(url_for('home'))
+
     if request.method == "GET":
         # Always reset state when user first visits reset page
         session["reset_step"] = "email"

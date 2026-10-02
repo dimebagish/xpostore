@@ -19,32 +19,31 @@
           <span class="brand-text">{{ store.business_name }}</span>
         </a>
         <div class="nav-actions">
-          {% if preview_flow %}
+          {% if client_mode %}
             <button class="nav-link nav-disabled" type="button" disabled>Create account</button>
             <button class="btn secondary" type="button" disabled>Login</button>
+          {% elif session.get('user_email') %}
+            <span class="user-chip">{{ session['user_email'] }}</span>
+            <div class="nav-group">
+              <a href="{{ url_for('account_purchased') }}" class="btn">Purchased</a>
+              <a href="{{ url_for('view_cart') }}" class="btn">Cart</a>
+            </div>
+            <a class="btn secondary" href="{{ url_for('logout') }}">Logout</a>
+          {% elif session.get('is_admin') %}
+            <span class="user-chip">Admin</span>
+            <a class="btn secondary" href="{{ url_for('admin_bookings') }}">Bookings</a>
+            <a class="btn" href="{{ url_for('admin_items') }}">Inventory</a>
+            <a class="btn secondary" href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+            <a class="nav-link" href="{{ url_for('signup') }}">Create account</a>
+            <a class="btn secondary" href="{{ url_for('login') }}">Login</a>
           {% endif %}
           {% if preview_mode %}
             <a class="btn secondary" href="{{ url_for('try_it_out') }}">Edit details</a>
             <form method="post" action="{{ url_for('exit_preview') }}">
               <button class="btn" type="submit">Exit preview</button>
             </form>
-          {% elif not preview_flow %}
-            {% if session.get('user_email') %}
-              <span class="user-chip">{{ session['user_email'] }}</span>
-              <div class="nav-group">
-                <a href="{{ url_for('account_purchased') }}" class="btn">Purchased</a>
-                <a href="{{ url_for('view_cart') }}" class="btn">Cart</a>
-              </div>
-              <a class="btn secondary" href="{{ url_for('logout') }}">Logout</a>
-            {% elif session.get('is_admin') %}
-              <span class="user-chip">Admin</span>
-              <a class="btn secondary" href="{{ url_for('admin_bookings') }}">Bookings</a>
-              <a class="btn" href="{{ url_for('admin_items') }}">Inventory</a>
-              <a class="btn secondary" href="{{ url_for('logout') }}">Logout</a>
-            {% else %}
-              <button class="nav-link nav-disabled" type="button" disabled>Create account</button>
-              <button class="btn secondary" type="button" disabled>Login</button>
-            {% endif %}
+          {% elif client_mode %}
             <a class="btn" href="{{ url_for('try_it_out') }}">Try it out</a>
           {% endif %}
         </div>

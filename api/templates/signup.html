@@ -11,23 +11,23 @@
     <form method="post">
       <div class="field">
         <label for="signup-email">Email</label>
-        <input class="input" id="signup-email" type="email" name="email" autocomplete="email" required disabled>
+        <input class="input" id="signup-email" type="email" name="email" autocomplete="email" required {% if client_mode %}disabled{% endif %}>
       </div>
       <div class="field">
         <label for="signup-password">Password</label>
-        <input class="input" id="signup-password" type="password" name="password" autocomplete="new-password" required disabled>
+        <input class="input" id="signup-password" type="password" name="password" autocomplete="new-password" required {% if client_mode %}disabled{% endif %}>
       </div>
       <div class="field">
         <label for="signup-phone">Phone</label>
-        <input class="input" id="signup-phone" type="tel" name="phone" autocomplete="tel" disabled>
+        <input class="input" id="signup-phone" type="tel" name="phone" autocomplete="tel" {% if client_mode %}disabled{% endif %}>
       </div>
       <div class="field">
         <label for="signup-address">Address</label>
-        <input class="input" id="signup-address" type="text" name="address" autocomplete="street-address" disabled>
+        <input class="input" id="signup-address" type="text" name="address" autocomplete="street-address" {% if client_mode %}disabled{% endif %}>
       </div>
-      <button class="btn full" type="submit" disabled>Create account</button>
+      <button class="btn full" type="submit" {% if client_mode %}disabled{% endif %}>Create account</button>
     </form>
-    <div class="auth-links"><span>Already have an account?</span><span class="auth-link-disabled" aria-disabled="true">Login</span></div>
+    <div class="auth-links"><span>Already have an account?</span>{% if client_mode %}<span class="auth-link-disabled" aria-disabled="true">Login</span>{% else %}<a href="{{ url_for('login') }}">Login</a>{% endif %}</div>
   </div>
 </section>
 {% endblock %}
